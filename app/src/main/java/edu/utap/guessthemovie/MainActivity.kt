@@ -7,6 +7,9 @@ import edu.utap.guessthemovie.databinding.ActivityMainBinding
 import kotlinx.coroutines.selects.select
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        var globalDebug = false
+    }
 
     private lateinit var userName: String
     private lateinit var binding: ActivityMainBinding

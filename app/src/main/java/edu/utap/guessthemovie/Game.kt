@@ -16,12 +16,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import edu.utap.guessthemovie.databinding.GameMainBinding
+import edu.utap.guessthemovie.glide.Glide
 
 
 class Game : AppCompatActivity() {
     companion object{
         val TAG = this::class.java.simpleName
-        val tag2 = "abc"
     }
     private val blurMax : Float = 55F
     private val blurStep : Float = 9F
@@ -29,6 +29,7 @@ class Game : AppCompatActivity() {
     private lateinit var stars : List<ImageView>
 
     // movie related data
+    private lateinit var moviePoster : String
     private lateinit var movieTitle : String
     private var movieYear : Int = 0
     private lateinit var movieDirector : String
@@ -51,9 +52,8 @@ class Game : AppCompatActivity() {
         binding = GameMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // get user score from selection screen
+        // get user score and user name from selection screen
         val activityThatCalled = intent
-        // display the player's name
         userScore = activityThatCalled.extras?.get("userScore") as Int
         userName = activityThatCalled.extras?.getString("userName").toString()
 
@@ -133,6 +133,8 @@ class Game : AppCompatActivity() {
         movieTitle = currentMovie.title
         movieYear = currentMovie.year
 
+        moviePoster = "https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg"
+        Glide.glideFetch(moviePoster, moviePoster, binding.moviePoster)
         binding.yearHint.text = movieYear.toString()
 
         binding.yearHint.visibility = View.INVISIBLE
