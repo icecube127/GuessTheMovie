@@ -1,6 +1,7 @@
 package edu.utap.guessthemovie
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
@@ -9,24 +10,35 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import android.view.animation.AlphaAnimation
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import edu.utap.guessthemovie.databinding.GameMainBinding
 
+
 class Game : AppCompatActivity() {
     companion object{
         val TAG = this::class.java.simpleName
+        val tag2 = "abc"
     }
     private val blurMax : Float = 55F
     private val blurStep : Float = 9F
     private val maxChances : Int = 5
     private lateinit var stars : List<ImageView>
-    private val movieTitle = "test"
+
+    // movie related data
+    private lateinit var movieTitle : String
+    private var movieYear : Int = 0
+    private lateinit var movieDirector : String
+    private lateinit var movieActor : String
+    private lateinit var movieSynopsis : String
 
     private var blur = blurMax
     private var chances = maxChances
     private var userScore : Int = 0
+    private var userName : String = ""
     private lateinit var binding : GameMainBinding
 
     private fun hideKeyboard() {
@@ -39,8 +51,20 @@ class Game : AppCompatActivity() {
         binding = GameMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // get user score from selection screen
+        val activityThatCalled = intent
+        // display the player's name
+        userScore = activityThatCalled.extras?.get("userScore") as Int
+        userName = activityThatCalled.extras?.getString("userName").toString()
+
+        // set up and play the game
         setupGame()
         binding.btnNext.setOnClickListener { playGame() }
+        binding.btnEndGame.setOnClickListener {
+            val selectionScreenIntent = Intent(this, SelectionPage::class.java)
+            selectionScreenIntent.putExtra("username", userName)
+            startActivity(selectionScreenIntent)
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -93,6 +117,8 @@ class Game : AppCompatActivity() {
     }
 
     private fun resetGame() {
+        // reset game will return all things to initial state
+        // also fetches data from API to get meta data for a new movie
         blur = blurMax
         chances = maxChances
         binding.userInput.text.clear()
@@ -100,6 +126,19 @@ class Game : AppCompatActivity() {
         stars = listOf(binding.star1, binding.star2, binding.star3, binding.star4, binding.star5)
         for(item in stars)
             item.setImageResource(android.R.drawable.btn_star_big_on)
+
+        // get new movie meta data
+        val movieDB = Movies()
+        val currentMovie = movieDB.fetchOneMovie()
+        movieTitle = currentMovie.title
+        movieYear = currentMovie.year
+
+        binding.yearHint.text = movieYear.toString()
+
+        binding.yearHint.visibility = View.INVISIBLE
+        binding.directorHint.visibility = View.INVISIBLE
+        binding.actorHint.visibility = View.INVISIBLE
+        binding.synopsisHint.visibility = View.INVISIBLE
     }
 
     private fun showPoster(blur : Float) {
@@ -109,11 +148,38 @@ class Game : AppCompatActivity() {
     }
 
     private fun updateStar(chance : Int) {
+        // this function will remove the star in order
+        // also reveal hint in order
+        val fadeIn = AlphaAnimation(0.0f, 1.0f)
         when (chance) {
-            4 -> flipStar(stars[4])
-            3 -> flipStar(stars[3])
-            2 -> flipStar(stars[2])
-            1 -> flipStar(stars[1])
+            4 -> {
+                flipStar(stars[4])
+                //binding.yearHint.visibility = View.VISIBLE
+                binding.yearHint.startAnimation(fadeIn)
+                fadeIn.duration = 1200
+                binding.yearHint.visibility = View.VISIBLE
+            }
+            3 -> {
+                flipStar(stars[3])
+                //binding.directorHint.visibility = View.VISIBLE
+                binding.directorHint.startAnimation(fadeIn)
+                fadeIn.duration = 1200
+                binding.directorHint.visibility = View.VISIBLE
+            }
+            2 -> {
+                flipStar(stars[2])
+                //binding.actorHint.visibility = View.VISIBLE
+                binding.actorHint.startAnimation(fadeIn)
+                fadeIn.duration = 1200
+                binding.actorHint.visibility = View.VISIBLE
+            }
+            1 -> {
+                flipStar(stars[1])
+                //binding.synopsisHint.visibility = View.VISIBLE
+                binding.synopsisHint.startAnimation(fadeIn)
+                fadeIn.duration = 1200
+                binding.synopsisHint.visibility = View.VISIBLE
+            }
             0 -> flipStar(stars[0])
             else -> Log.d(TAG, "Do nothing")
         }
@@ -184,7 +250,7 @@ class Game : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun winGame(){
         blur = 1F
-        userScore += chances * 10
+        userScore += chances
         binding.playerPoints.text = " X $userScore"
         chances = 0
         binding.titleHint.setBackgroundColor(Color.GREEN)
@@ -197,5 +263,10 @@ class Game : AppCompatActivity() {
         handler.postDelayed({
             showPoster(blur)
         }, 750)
+
+        binding.yearHint.visibility = View.VISIBLE
+        binding.directorHint.visibility = View.VISIBLE
+        binding.actorHint.visibility = View.VISIBLE
+        binding.synopsisHint.visibility = View.VISIBLE
     }
 }

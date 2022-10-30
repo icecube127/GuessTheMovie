@@ -18,12 +18,12 @@
     <TextView
         android:id="@+id/titleHint"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_weight="0.5"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:gravity="center"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -105,7 +105,7 @@
         android:layout_gravity="left"
         android:paddingBottom="5dp">
         <TextView
-            android:layout_width="75dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:id="@+id/yearLabel"
             android:text="Year: "
@@ -128,7 +128,7 @@
         android:layout_gravity="left"
         android:paddingBottom="5dp">
         <TextView
-            android:layout_width="75dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:id="@+id/directorLabel"
             android:text="Director: "
@@ -151,7 +151,7 @@
         android:layout_gravity="left"
         android:paddingBottom="5dp">
         <TextView
-            android:layout_width="75dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:id="@+id/actorLabel"
             android:text="Actors: "
@@ -176,7 +176,7 @@
         android:layout_gravity="left"
         android:paddingBottom="5dp">
         <TextView
-            android:layout_width="75dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:id="@+id/synopsisLabel"
             android:text="Synopsis: "
