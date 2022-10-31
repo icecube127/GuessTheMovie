@@ -1,6 +1,7 @@
 package edu.utap.guessthemovie
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.RenderEffect
@@ -15,14 +16,23 @@ import android.view.animation.AlphaAnimation
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import edu.utap.guessthemovie.api.MovieApi
+import edu.utap.guessthemovie.api.MovieData
+import edu.utap.guessthemovie.api.Repository
 import edu.utap.guessthemovie.databinding.GameMainBinding
 import edu.utap.guessthemovie.glide.Glide
+import kotlinx.coroutines.*
 
+class Game : AppCompatActivity(){
+    private val scope = MainScope()
 
-class Game : AppCompatActivity() {
     companion object{
         val TAG = this::class.java.simpleName
     }
+
+    // constant values
     private val blurMax : Float = 55F
     private val blurStep : Float = 9F
     private val maxChances : Int = 5
@@ -36,11 +46,17 @@ class Game : AppCompatActivity() {
     private lateinit var movieActor : String
     private lateinit var movieSynopsis : String
 
+    // game setting values
     private var blur = blurMax
     private var chances = maxChances
     private var userScore : Int = 0
     private var userName : String = ""
     private lateinit var binding : GameMainBinding
+
+    // API related data
+    private val movieApi = MovieApi.create()
+    private val movieRepository = Repository(movieApi)
+    private val movieMeta = MutableLiveData<MovieData>()
 
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -73,6 +89,7 @@ class Game : AppCompatActivity() {
         binding.playerPoints.text = " X $userScore"
         playGame()
     }
+
     private fun playGame(){
         // resets the game parameters and set up the poster + Title hint
         resetGame()
@@ -90,8 +107,6 @@ class Game : AppCompatActivity() {
                 val userInput = binding.userInput.text.toString()
                 hideKeyboard()
                 if (checkAnswer(movieTitle, userInput)) {
-                    // USER ANSWERED CORRECTLY.
-                    // NEED TO ADD CODE FOR SCORING.
                     winGame()
                 }
                 else {
@@ -119,6 +134,8 @@ class Game : AppCompatActivity() {
     private fun resetGame() {
         // reset game will return all things to initial state
         // also fetches data from API to get meta data for a new movie
+
+        // Resetting all the game setting data reset stars
         blur = blurMax
         chances = maxChances
         binding.userInput.text.clear()
@@ -127,15 +144,34 @@ class Game : AppCompatActivity() {
         for(item in stars)
             item.setImageResource(android.R.drawable.btn_star_big_on)
 
-        // get new movie meta data
+        // get new movie title from Movies.kt which is a list of pre-determined movies
         val movieDB = Movies()
         val currentMovie = movieDB.fetchOneMovie()
         movieTitle = currentMovie.title
         movieYear = currentMovie.year
 
+        //===================================================================
+        //===================================================================
+        // code to get new movie meta data from network
+        this.getMovie()
+        movieMeta.observe(this) {
+            println("XXXXX $it")
+            movieDirector = it.director
+            movieActor = it.actors
+            movieSynopsis = it.plot
+        }
+
+//        println("XXXXX $movieDirector")
+//        println("XXXXX $movieActor")
+        //===================================================================
+        //===================================================================
+
         moviePoster = "https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg"
         Glide.glideFetch(moviePoster, moviePoster, binding.moviePoster)
         binding.yearHint.text = movieYear.toString()
+//        binding.directorHint.text = movieDirector
+//        binding.actorHint.text = movieActor
+//        binding.synopsisHint.text = movieSynopsis
 
         binding.yearHint.visibility = View.INVISIBLE
         binding.directorHint.visibility = View.INVISIBLE
@@ -251,9 +287,11 @@ class Game : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun winGame(){
-        blur = 1F
+        // XXXX WRITE ME
         userScore += chances
         binding.playerPoints.text = " X $userScore"
+
+        blur = 1F
         chances = 0
         binding.titleHint.setBackgroundColor(Color.GREEN)
 
@@ -270,5 +308,16 @@ class Game : AppCompatActivity() {
         binding.directorHint.visibility = View.VISIBLE
         binding.actorHint.visibility = View.VISIBLE
         binding.synopsisHint.visibility = View.VISIBLE
+    }
+
+    private fun getMovie() {
+        scope.launch {
+            val myMovie = movieRepository.fetchMovie(movieTitle)
+            movieMeta.postValue(myMovie)
+        }
+    }
+
+    private fun observeMovie (): LiveData<MovieData> {
+        return movieMeta
     }
 }
