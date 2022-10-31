@@ -37,4 +37,13 @@
         app:layout_constraintTop_toBottomOf="@id/btn_Signin"
         android:backgroundTint="@color/teal"
         />
+
+    <Button
+        android:id="@+id/btn_Signout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:backgroundTint="@color/teal"
+        android:text="Sign Out"
+        android:textSize="26sp" />
 </LinearLayout>

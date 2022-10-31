@@ -42,6 +42,16 @@ class MainActivity : AppCompatActivity() {
         binding.btnGuest.setOnClickListener {
             playAsGuest()
         }
+
+        binding.btnSignout.setOnClickListener{
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null) {
+                println( "...... In log out ${user.displayName} email ${user.email}")
+                viewModel.signOut()
+                val user = FirebaseAuth.getInstance().currentUser
+                println( "...... After log out ${user?.displayName} email ${user?.email}")
+            }
+        }
     }
 
     private fun playAsGuest() {
