@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "82105456430",
+    "project_id": "guessthemovie-704b9",
+    "storage_bucket": "guessthemovie-704b9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82105456430:android:bcbfb66f8e2cbf37700cbf",
+        "android_client_info": {
+          "package_name": "edu.utap.guessthemovie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82105456430-rtv5bbc4tsu606sknm6ms9ash4mk15g8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.utap.guessthemovie",
+            "certificate_hash": "78c269f70e1ba9a399f95ceba92ee06b3f96252b"
+          }
+        },
+        {
+          "client_id": "82105456430-h721q1v231j49p2sabqa6kq3i7l4mc6m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWQfVL-qeUjU8KlcJ6rp8Py1mKyfDuD-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82105456430-h721q1v231j49p2sabqa6kq3i7l4mc6m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
