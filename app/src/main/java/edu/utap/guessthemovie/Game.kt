@@ -61,7 +61,7 @@ class Game : AppCompatActivity() {
         setupGame()
         binding.btnNext.setOnClickListener { playGame() }
         binding.btnEndGame.setOnClickListener {
-            val selectionScreenIntent = Intent(this, SelectionPage::class.java)
+            val selectionScreenIntent = Intent(this, ProfilePage::class.java)
             selectionScreenIntent.putExtra("username", userName)
             startActivity(selectionScreenIntent)
         }

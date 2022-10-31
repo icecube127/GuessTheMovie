@@ -3,8 +3,8 @@ package edu.utap.guessthemovie
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.util.Log
 import edu.utap.guessthemovie.databinding.ActivityMainBinding
-import kotlinx.coroutines.selects.select
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -13,8 +13,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var userName: String
     private lateinit var binding: ActivityMainBinding
-    private val guestNames = listOf<String>("Captain America", "Ironman", "Thor", "Hulk", "Blackwindow", "Hawkeye", "Nick Fury")
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,17 +20,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(activityMainBinding.root)
         binding = activityMainBinding
 
+        binding.btnSignin.setOnClickListener {
+            Log.d("XXXX", "This should go to sign page")
+            // XXXXX WRITE ME
+        }
+
         binding.btnGuest.setOnClickListener {
-            play()
+            playAsGuest()
         }
     }
 
-    private fun play() {
-        val randomNamePosition = (0..6).random()
-        val randomNumber = (100..999).random()
-        userName = guestNames[randomNamePosition] + " " + randomNumber.toShort()
-
-        val selectionScreenIntent = Intent(this, SelectionPage::class.java)
+    private fun playAsGuest() {
+        userName = "guest"
+        val selectionScreenIntent = Intent(this, ProfilePage::class.java)
         selectionScreenIntent.putExtra("username", userName)
         startActivity(selectionScreenIntent)
     }

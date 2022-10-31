@@ -27,7 +27,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".SelectionPage"
+            android:name=".ProfilePage"
             android:label="Selection Page">
         </activity>
 
