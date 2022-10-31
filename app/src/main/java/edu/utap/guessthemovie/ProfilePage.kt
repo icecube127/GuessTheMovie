@@ -10,12 +10,12 @@ import edu.utap.guessthemovie.databinding.ProfileMainBinding
 
 class ProfilePage : AppCompatActivity() {
 
-    class leaderBoard(var name: String, var score: Int){
+    class LeaderBoard(var name: String, var score: Int){
         override fun toString(): String {
                 return this.name + ": " + this.score
         }
     }
-    private var highScores = mutableListOf<leaderBoard>()
+    private var highScores = mutableListOf<LeaderBoard>()
 
     private lateinit var binding : ProfileMainBinding
     private var userName = ""
@@ -48,35 +48,44 @@ class ProfilePage : AppCompatActivity() {
                 binding.tvName.isEnabled = false
 
                 // XXXXX WRITE ME
-                // Need to update the username in DB as well.
+                // need to grab user score and name from DB
             }
         }
 
         // show leaderboard
         binding.starLeft.setImageResource(android.R.drawable.btn_star_big_on)
         binding.starRight.setImageResource(android.R.drawable.btn_star_big_on)
-        highScores.addAll(
-            listOf(
-                leaderBoard("Black Adam", 997),
-                leaderBoard("Hawkman", 997),
-                leaderBoard("Dr. Fate", 13)
-            )
-        )
+        setupLeaderBoard()
         this.renderHighScores()
 
         // PLAY GAME button
         binding.btnPlay.setOnClickListener {
             val gameIntent = Intent(this, Game::class.java)
+            // XXXXX REMOVE ME LATER
             val userScore : Int = (0..100).random()
+
             gameIntent.putExtra("userScore", userScore)
             gameIntent.putExtra("userName", userName)
             startActivity(gameIntent)
         }
     }
 
+    private fun setupLeaderBoard(){
+        // XXXXX WRITE ME
+        // GET LEADER BOARD INFO FROM DB
+
+        highScores.addAll(
+            listOf(
+                LeaderBoard("Black Adam", 997),
+                LeaderBoard("Hawkman", 997),
+                LeaderBoard("Dr. Fate", 13)
+            )
+        )
+    }
+
     private fun renderHighScores() {
         // NEED to replace with get leaderboard info from DB
-        highScores.sortWith(compareByDescending<leaderBoard>{it.score}.thenBy{it.name})
+        highScores.sortWith(compareByDescending<LeaderBoard>{it.score}.thenBy{it.name})
         // Convert Score objects into a list of strings
         val stringList = highScores.map { it.toString() }
         // A simple way to display lists
