@@ -14,25 +14,20 @@ interface MovieApi {
     // example API call
     // http://www.omdbapi.com/?t=Toy+Story+4&apikey=b39cee
     // apikey is b39cee
-//    @GET("?/t={title}&apikey=b39cee")
-//    suspend fun getMovie(@Path("title") movie: String) : MovieResponse
+//    @GET("?t={title}&apikey=b39cee")
+//    suspend fun getMovie(@Path("title") title: String) : MovieData
 
-    @GET("?t=joker&apikey=b39cee")
-    suspend fun getMovie() : MovieResponse
+    @GET("?t=Spectre&apikey=b39cee")
+    suspend fun getMovie() : MovieData
 
-    data class MovieResponse(val results: MovieData)
+    //data class MovieResponse(val results: MovieData)
 
     companion object Factory{
-        // Leave this as a simple, base URL.  That way, we can have many different
-        // functions (above) that access different "paths" on this server
-        // https://square.github.io/okhttp/4.x/okhttp/okhttp3/-http-url/
         var url = HttpUrl.Builder()
             .scheme("https")
             .host("omdbapi.com")
             .build()
 
-        // Public create function that ties together building the base
-        // URL and the private create function that initializes Retrofit
         fun create(): MovieApi = create(url)
         private fun create(httpUrl: HttpUrl): MovieApi {
             val client = OkHttpClient.Builder()

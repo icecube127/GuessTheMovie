@@ -43,10 +43,10 @@ class Game : AppCompatActivity(){
     // movie related data
     private lateinit var moviePoster : String
     private lateinit var movieTitle : String
-    private var movieYear : Int = 0
-    private lateinit var movieDirector : String
-    private lateinit var movieActor : String
-    private lateinit var movieSynopsis : String
+    private var movieYear : String = ""
+    private var movieDirector : String = ""
+    private var movieActor : String = ""
+    private var movieSynopsis : String = ""
 
     // game setting values
     private var blur = blurMax
@@ -150,29 +150,26 @@ class Game : AppCompatActivity(){
         val movieDB = Movies()
         val currentMovie = movieDB.fetchOneMovie()
         movieTitle = currentMovie.title
-        movieYear = currentMovie.year
-
+        movieTitle = "Spectre"
         //===================================================================
         //===================================================================
         // code to get new movie meta data from network
         viewModel.getMovie(movieTitle)
         viewModel.observeMovie().observe(this) {
+            movieYear = it.year
             movieDirector = it.director
             movieActor = it.actors
             movieSynopsis = it.plot
+            moviePoster = it.poster
+
+            binding.yearHint.text = movieYear
+            binding.directorHint.text = movieDirector
+            binding.actorHint.text = movieActor
+            binding.synopsisHint.text = movieSynopsis
+            Glide.glideFetch(moviePoster, moviePoster, binding.moviePoster)
         }
-
-//        println("XXXXX $movieDirector")
-//        println("XXXXX $movieActor")
         //===================================================================
         //===================================================================
-
-        moviePoster = "https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg"
-        Glide.glideFetch(moviePoster, moviePoster, binding.moviePoster)
-        binding.yearHint.text = movieYear.toString()
-//        binding.directorHint.text = movieDirector
-//        binding.actorHint.text = movieActor
-//        binding.synopsisHint.text = movieSynopsis
 
         binding.yearHint.visibility = View.INVISIBLE
         binding.directorHint.visibility = View.INVISIBLE

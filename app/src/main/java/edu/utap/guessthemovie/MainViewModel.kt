@@ -26,10 +26,7 @@ class MainViewModel : ViewModel() {
     fun getMovie(title: String) = viewModelScope.launch (
         context = viewModelScope.coroutineContext + Dispatchers.Default) {
         val myMovie = movieRepository.fetchMovie(title)
-        if (myMovie == null)
-            println("XXXXXXXXXXXXXXXXXXXXXXXXX null")
         movieMeta.postValue(myMovie)
-        //println("XXXXXXXX ${myMovie.actors}")
         }
 
     fun observeMovie (): LiveData<MovieData> {
