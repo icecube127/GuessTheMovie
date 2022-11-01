@@ -15,6 +15,7 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -31,6 +32,7 @@ class Game : AppCompatActivity(){
     companion object{
         val TAG = this::class.java.simpleName
     }
+    private val viewModel: MainViewModel by viewModels()
 
     // constant values
     private val blurMax : Float = 55F
@@ -53,10 +55,10 @@ class Game : AppCompatActivity(){
     private var userName : String = ""
     private lateinit var binding : GameMainBinding
 
-    // API related data
-    private val movieApi = MovieApi.create()
-    private val movieRepository = Repository(movieApi)
-    private val movieMeta = MutableLiveData<MovieData>()
+//    // API related data
+//    private val movieApi = MovieApi.create()
+//    private val movieRepository = Repository(movieApi)
+//    private val movieMeta = MutableLiveData<MovieData>()
 
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -153,9 +155,8 @@ class Game : AppCompatActivity(){
         //===================================================================
         //===================================================================
         // code to get new movie meta data from network
-        this.getMovie()
-        movieMeta.observe(this) {
-            println("XXXXX $it")
+        viewModel.getMovie(movieTitle)
+        viewModel.observeMovie().observe(this) {
             movieDirector = it.director
             movieActor = it.actors
             movieSynopsis = it.plot
@@ -308,16 +309,5 @@ class Game : AppCompatActivity(){
         binding.directorHint.visibility = View.VISIBLE
         binding.actorHint.visibility = View.VISIBLE
         binding.synopsisHint.visibility = View.VISIBLE
-    }
-
-    private fun getMovie() {
-        scope.launch {
-            val myMovie = movieRepository.fetchMovie(movieTitle)
-            movieMeta.postValue(myMovie)
-        }
-    }
-
-    private fun observeMovie (): LiveData<MovieData> {
-        return movieMeta
     }
 }

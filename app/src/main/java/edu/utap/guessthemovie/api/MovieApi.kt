@@ -20,7 +20,6 @@ interface MovieApi {
     @GET("?t=joker&apikey=b39cee")
     suspend fun getMovie() : MovieResponse
 
-
     data class MovieResponse(val results: MovieData)
 
     companion object Factory{
@@ -28,7 +27,7 @@ interface MovieApi {
         // functions (above) that access different "paths" on this server
         // https://square.github.io/okhttp/4.x/okhttp/okhttp3/-http-url/
         var url = HttpUrl.Builder()
-            .scheme("http")
+            .scheme("https")
             .host("omdbapi.com")
             .build()
 

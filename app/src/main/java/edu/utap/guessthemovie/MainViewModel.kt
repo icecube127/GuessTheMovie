@@ -6,6 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import edu.utap.guessthemovie.api.MovieApi
+import edu.utap.guessthemovie.api.MovieData
+import edu.utap.guessthemovie.api.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -14,6 +17,24 @@ class MainViewModel : ViewModel() {
     private var displayName = MutableLiveData("Uninitialized")
     private var email = MutableLiveData("Uninitialized")
     private var uid = MutableLiveData("Uninitialized")
+
+    // API related data
+    private val movieApi = MovieApi.create()
+    private val movieRepository = Repository(movieApi)
+    private val movieMeta = MutableLiveData<MovieData>()
+
+    fun getMovie(title: String) = viewModelScope.launch (
+        context = viewModelScope.coroutineContext + Dispatchers.Default) {
+        val myMovie = movieRepository.fetchMovie(title)
+        if (myMovie == null)
+            println("XXXXXXXXXXXXXXXXXXXXXXXXX null")
+        movieMeta.postValue(myMovie)
+        //println("XXXXXXXX ${myMovie.actors}")
+        }
+
+    fun observeMovie (): LiveData<MovieData> {
+        return movieMeta
+    }
 
     private fun userLogout() {
         displayName.postValue("No user")

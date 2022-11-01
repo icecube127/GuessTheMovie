@@ -3,6 +3,8 @@ package edu.utap.guessthemovie.api
 import com.google.gson.annotations.SerializedName
 
 data class MovieData (
+    @SerializedName("Year")
+    val year: String,
     @SerializedName("Genre")
     val genre: String,
     @SerializedName("Director")
