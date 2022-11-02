@@ -150,7 +150,6 @@ class Game : AppCompatActivity(){
         val movieDB = Movies()
         val currentMovie = movieDB.fetchOneMovie()
         movieTitle = currentMovie.title
-        movieTitle = "Spectre"
         //===================================================================
         //===================================================================
         // code to get new movie meta data from network

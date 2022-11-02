@@ -14,13 +14,8 @@ interface MovieApi {
     // example API call
     // http://www.omdbapi.com/?t=Toy+Story+4&apikey=b39cee
     // apikey is b39cee
-//    @GET("?t={title}&apikey=b39cee")
-//    suspend fun getMovie(@Path("title") title: String) : MovieData
-
-    @GET("?t=Spectre&apikey=b39cee")
-    suspend fun getMovie() : MovieData
-
-    //data class MovieResponse(val results: MovieData)
+    @GET("?&apikey=b39cee")
+    suspend fun getMovie(@Query("t") title: String) : MovieData
 
     companion object Factory{
         var url = HttpUrl.Builder()
