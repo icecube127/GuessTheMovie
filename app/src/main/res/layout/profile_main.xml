@@ -4,41 +4,58 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello player"
-        android:id="@+id/tv_hello"
-        android:textSize="36sp"
-        android:layout_marginTop="30dp"
-        />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
         >
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_name"
-            android:textSize="18sp"
-            android:layout_marginTop="10dp"
-            android:maxLength="20"
-            android:textColorHint="@color/black"
-            android:textColor="@color/black"
-            />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello "
+        android:id="@+id/tv_hello"
+        android:textSize="26sp"
+        android:textColor="@color/black"
+        />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_name"
+        android:textSize="26sp"
+        android:maxLength="20"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
+        />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        >
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btn_editName"
-            android:textSize="10sp"
+            android:textSize="14sp"
             android:text="Edit"
+            android:backgroundTint="@color/teal"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_signIn"
+            android:textSize="14sp"
+            android:text="Sign In"
             android:layout_marginStart="20dp"
             android:backgroundTint="@color/teal"
             android:minHeight="0dp"
             android:minWidth="0dp"
-            android:layout_gravity="bottom"
             />
     </LinearLayout>
     <Button
@@ -68,6 +85,7 @@
             android:text="LEADER BOARD"
             android:id="@+id/leaderText"
             android:textSize="28sp"
+            android:textColor="@color/black"
             />
 
         <ImageView

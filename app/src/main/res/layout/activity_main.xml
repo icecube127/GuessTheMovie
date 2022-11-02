@@ -7,16 +7,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/background">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Guess The Movie!!"
-        android:textSize="34sp"
         android:layout_marginTop="175dp"
-        />
+        android:fontFamily="cursive"
+        android:text="Guess The Movie!"
+        android:textSize="52sp"
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/btn_Signin"
@@ -37,13 +39,4 @@
         app:layout_constraintTop_toBottomOf="@id/btn_Signin"
         android:backgroundTint="@color/teal"
         />
-
-    <Button
-        android:id="@+id/btn_Signout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:backgroundTint="@color/teal"
-        android:text="Sign Out"
-        android:textSize="26sp" />
 </LinearLayout>

@@ -15,12 +15,12 @@ class MainActivity : AppCompatActivity() {
     }
     private val viewModel: MainViewModel by viewModels()
 
-    private lateinit var userName: String
     private lateinit var binding: ActivityMainBinding
 
     private val signInLauncher =
         registerForActivityResult(FirebaseAuthUIActivityResultContract()) {
             viewModel.updateUser()
+            playGame()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +29,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(activityMainBinding.root)
         binding = activityMainBinding
 
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            binding.btnSignin.text = "Sign In"
+            binding.btnGuest.text = "Play as Guest"
+        } else{
+            binding.btnSignin.text = "Sign Out"
+            binding.btnGuest.text = "Play"
+        }
+
         binding.btnSignin.setOnClickListener {
             Log.d("XXXX", "This should go to sign page")
             // XXXXX WRITE ME
@@ -36,28 +45,18 @@ class MainActivity : AppCompatActivity() {
             if(user == null){
                 println( "...... In log in  ${user?.displayName} email ${user?.email}")
                 AuthInit(viewModel, signInLauncher)
+            } else {
+                viewModel.signOut()
             }
         }
 
         binding.btnGuest.setOnClickListener {
-            playAsGuest()
-        }
-
-        binding.btnSignout.setOnClickListener{
-            val user = FirebaseAuth.getInstance().currentUser
-            if (user != null) {
-                println( "...... In log out ${user.displayName} email ${user.email}")
-                viewModel.signOut()
-                val user = FirebaseAuth.getInstance().currentUser
-                println( "...... After log out ${user?.displayName} email ${user?.email}")
-            }
+            playGame()
         }
     }
 
-    private fun playAsGuest() {
-        userName = "guest"
+    private fun playGame() {
         val selectionScreenIntent = Intent(this, ProfilePage::class.java)
-        selectionScreenIntent.putExtra("username", userName)
         startActivity(selectionScreenIntent)
     }
 }

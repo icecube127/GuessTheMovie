@@ -4,12 +4,18 @@ import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract.Profile
+import android.util.Log
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import edu.utap.guessthemovie.databinding.ProfileMainBinding
 
 class ProfilePage : AppCompatActivity() {
 
+    private val viewModel: MainViewModel by viewModels()
     class LeaderBoard(var name: String, var score: Int){
         override fun toString(): String {
                 return this.name + ": " + this.score
@@ -21,21 +27,37 @@ class ProfilePage : AppCompatActivity() {
     private var userName = ""
     private val guestNames = listOf<String>("Captain America", "Ironman", "Thor", "Hulk", "Blackwindow", "Hawkeye", "Nick Fury")
 
+    private val signInLauncher =
+        registerForActivityResult(FirebaseAuthUIActivityResultContract()) {
+                result ->
+            if (result.resultCode == RESULT_OK) {
+                // Successfully signed in
+                val user = FirebaseAuth.getInstance().currentUser
+                if (user != null){
+                    viewModel.updateUser()
+                }
+                // ...
+            } else {
+                Log.d("XXXXXX", "Sign in error")
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ProfileMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val activityThatCalled = intent
         // display the player's name
-        userName = activityThatCalled.extras?.getString("username").toString()
-        if (userName == "guest") {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            userName = user.displayName.toString()
+        }else {
             userName = randomName()
         }
-
         binding.tvName.hint = userName
         binding.tvName.isEnabled = false
 
+        // this set up editing user name
         binding.btnEditName.setOnClickListener {
             if(binding.btnEditName.text == "Edit") {
                 binding.btnEditName.text = "Submit"
@@ -46,9 +68,24 @@ class ProfilePage : AppCompatActivity() {
                 binding.tvName.hint = userName
                 binding.btnEditName.text = "Edit"
                 binding.tvName.isEnabled = false
+                AuthInit.setDisplayName(userName, viewModel)
+            }
+        }
 
-                // XXXXX WRITE ME
-                // need to grab user score and name from DB
+        // set up the sign in and out button
+        if(user == null) {
+            binding.btnSignIn.text = "Sign In"
+        } else {
+            binding.btnSignIn.text = "Sign Out"
+        }
+        binding.btnSignIn.setOnClickListener {
+            if (user == null) {
+                val mainActivityIntent = Intent(this, MainActivity::class.java)
+                startActivity(mainActivityIntent)
+            } else {
+                viewModel.signOut()
+                val mainActivityIntent = Intent(this, MainActivity::class.java)
+                startActivity(mainActivityIntent)
             }
         }
 
