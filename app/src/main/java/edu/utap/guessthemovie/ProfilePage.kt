@@ -93,7 +93,6 @@ class ProfilePage : AppCompatActivity() {
         binding.starLeft.setImageResource(android.R.drawable.btn_star_big_on)
         binding.starRight.setImageResource(android.R.drawable.btn_star_big_on)
         setupLeaderBoard()
-        //this.renderHighScores()
 
         // PLAY GAME button
         binding.btnPlay.setOnClickListener {

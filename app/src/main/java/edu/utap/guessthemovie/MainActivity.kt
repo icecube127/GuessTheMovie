@@ -39,13 +39,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnSignin.setOnClickListener {
-            Log.d("XXXX", "This should go to sign page")
-            // XXXXX WRITE ME
-            val user = FirebaseAuth.getInstance().currentUser
             if(user == null){
                 println( "...... In log in  ${user?.displayName} email ${user?.email}")
                 AuthInit(viewModel, signInLauncher)
-//                viewModel.createScoreMeta()
             } else {
                 viewModel.signOut()
             }

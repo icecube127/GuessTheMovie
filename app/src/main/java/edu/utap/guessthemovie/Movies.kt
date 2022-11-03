@@ -113,7 +113,6 @@ class Movies {
             Movie("Harry Potter and the Deathly Hallows, Part 2", 2011),
             Movie("Transformers: Dark of the Moon", 2011),
             Movie("Pirates of the Caribbean: On Stranger Tides", 2011),
-            Movie("Marvel's The Avengers", 2012),
             Movie("Skyfall", 2012),
             Movie("The Dark Knight Rises", 2012),
             Movie("The Hobbit: An Unexpected Journey", 2012),

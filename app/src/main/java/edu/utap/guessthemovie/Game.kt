@@ -57,10 +57,8 @@ class Game : AppCompatActivity(){
     private lateinit var binding : GameMainBinding
     private val user = FirebaseAuth.getInstance().currentUser
 
-//    // API related data
-//    private val movieApi = MovieApi.create()
-//    private val movieRepository = Repository(movieApi)
-//    private val movieMeta = MutableLiveData<MovieData>()
+    // For Testing
+    private var currentPosition = 0
 
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -94,7 +92,7 @@ class Game : AppCompatActivity(){
                 }
             }
         } else {
-            Log.d("XXXXXXXXXXXXXXXX", "not logged in")
+            Log.d(TAG, "not logged in")
             userScore = 0
         }
         binding.playerStar.setImageResource(android.R.drawable.btn_star_big_on)
@@ -114,12 +112,12 @@ class Game : AppCompatActivity(){
         binding.bntSubmit.setOnClickListener {
             if (chances == 0) {
                 // do nothing.
-                Log.d(TAG, "game is over")
+                Log.d(TAG, "GAME LOST")
             } else {
                 val userInput = binding.userInput.text.toString()
                 hideKeyboard()
                 if (checkAnswer(movieTitle, userInput)) {
-                    Log.d("XXXXXX", "Game Win")
+                    Log.d(TAG, "GAME WON")
                     winGame()
                 }
                 else {
@@ -161,8 +159,15 @@ class Game : AppCompatActivity(){
         val movieDB = Movies()
         val currentMovie = movieDB.fetchOneMovie()
         movieTitle = currentMovie.title
-        //===================================================================
-        //===================================================================
+
+        // ===========================================
+        // below is for testing only
+//        val currentMovie = movieDB.fetchMovie(currentPosition)
+//        currentPosition += 1
+//        if (currentPosition == movieDB.listSize())
+//            currentPosition = 0
+        // ===========================================
+
         // code to get new movie meta data from network
         viewModel.getMovie(movieTitle)
         viewModel.observeMovie().observe(this) {
@@ -172,15 +177,14 @@ class Game : AppCompatActivity(){
             movieSynopsis = it.plot
             moviePoster = it.poster
 
-            Log.d("ERROR!!!!!!! ", "abcd")
+            Log.d("XXXXXXXXXXXXXXXXXXXXXXXXXXX", "Movie title: $movieTitle")
+            Log.d("XXXXXXXXXXXXXXXXXXXXXXXXXXX", "Current position: $currentPosition")
             binding.yearHint.text = movieYear
             binding.directorHint.text = movieDirector
             binding.actorHint.text = movieActor
             binding.synopsisHint.text = movieSynopsis
             Glide.glideFetch(moviePoster, moviePoster, binding.moviePoster)
         }
-        //===================================================================
-        //===================================================================
 
         binding.yearHint.visibility = View.INVISIBLE
         binding.directorHint.visibility = View.INVISIBLE
@@ -297,7 +301,8 @@ class Game : AppCompatActivity(){
 
     @SuppressLint("SetTextI18n")
     private fun winGame() {
-        // XXXX WRITE ME
+        // update the score. If user is logged in, also update the score in DB
+        // do the answer reveal animation
         userScore += chances
         if (user != null) {
             viewModel.updateScoreMeta(userScore)
