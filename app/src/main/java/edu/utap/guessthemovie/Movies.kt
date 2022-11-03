@@ -192,7 +192,16 @@ class Movies {
     }
     fun fetchOneMovie(): Movie {
         val size = MovieDataList.size
-        val MoviePick = (0 until size).random()
-        return MovieDataList[MoviePick]
+        val moviePick = (0 until size).random()
+        return MovieDataList[moviePick]
+    }
+
+    // for testing purposes
+    fun fetchMovie(position : Int) : Movie {
+        return MovieDataList[position]
+    }
+
+    fun listSize() : Int {
+        return MovieDataList.size
     }
 }

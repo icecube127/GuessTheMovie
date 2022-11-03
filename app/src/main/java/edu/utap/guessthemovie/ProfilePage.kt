@@ -93,16 +93,11 @@ class ProfilePage : AppCompatActivity() {
         binding.starLeft.setImageResource(android.R.drawable.btn_star_big_on)
         binding.starRight.setImageResource(android.R.drawable.btn_star_big_on)
         setupLeaderBoard()
-        this.renderHighScores()
+        //this.renderHighScores()
 
         // PLAY GAME button
         binding.btnPlay.setOnClickListener {
             val gameIntent = Intent(this, Game::class.java)
-            // XXXXX REMOVE ME LATER
-            val userScore : Int = (0..100).random()
-
-            gameIntent.putExtra("userScore", userScore)
-            gameIntent.putExtra("userName", userName)
             startActivity(gameIntent)
         }
     }
@@ -110,14 +105,13 @@ class ProfilePage : AppCompatActivity() {
     private fun setupLeaderBoard(){
         // XXXXX WRITE ME
         // GET LEADER BOARD INFO FROM DB
-
-        highScores.addAll(
-            listOf(
-                LeaderBoard("Black Adam", 997),
-                LeaderBoard("Hawkman", 997),
-                LeaderBoard("Dr. Fate", 13)
-            )
-        )
+        viewModel.fetchScoreMeta()
+        viewModel.observeScoreMeta().observe(this) {
+            for (item in it) {
+                highScores.add(LeaderBoard(item.name, item.score))
+            }
+            renderHighScores()
+        }
     }
 
     private fun renderHighScores() {

@@ -55,6 +55,7 @@ class Game : AppCompatActivity(){
     private var userScore : Int = 0
     private var userName : String = ""
     private lateinit var binding : GameMainBinding
+    private val user = FirebaseAuth.getInstance().currentUser
 
 //    // API related data
 //    private val movieApi = MovieApi.create()
@@ -71,12 +72,6 @@ class Game : AppCompatActivity(){
         binding = GameMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // get user score and user name from selection screen
-        val activityThatCalled = intent
-        userScore = activityThatCalled.extras?.get("userScore") as Int
-        userName = activityThatCalled.extras?.getString("userName").toString()
-
-        // set up and play the game
         setupGame()
         binding.btnNext.setOnClickListener { playGame() }
         binding.btnEndGame.setOnClickListener {
@@ -88,6 +83,20 @@ class Game : AppCompatActivity(){
 
     @SuppressLint("SetTextI18n")
     private fun setupGame() {
+        if(user != null) {
+            viewModel.fetchScoreMeta()
+            viewModel.observeScoreMeta().observe(this) {
+                for (item in it) {
+                    if (item.ownerUid == user.uid) {
+                        userScore = item.score
+                        binding.playerPoints.text = " X $userScore"
+                    }
+                }
+            }
+        } else {
+            Log.d("XXXXXXXXXXXXXXXX", "not logged in")
+            userScore = 0
+        }
         binding.playerStar.setImageResource(android.R.drawable.btn_star_big_on)
         binding.playerPoints.text = " X $userScore"
         playGame()
@@ -163,6 +172,7 @@ class Game : AppCompatActivity(){
             movieSynopsis = it.plot
             moviePoster = it.poster
 
+            Log.d("ERROR!!!!!!! ", "abcd")
             binding.yearHint.text = movieYear
             binding.directorHint.text = movieDirector
             binding.actorHint.text = movieActor
@@ -288,38 +298,28 @@ class Game : AppCompatActivity(){
     @SuppressLint("SetTextI18n")
     private fun winGame() {
         // XXXX WRITE ME
-        val user = FirebaseAuth.getInstance().currentUser
-        viewModel.fetchScoreMeta()
-        viewModel.observeScoreMeta().observe(this) {
-            for (item in it) {
-                if (user != null) {
-                    if (item.ownerUid == user.uid) {
-                        userScore = item.score
-                    }
-                }
-            }
-            println("Return from db " + userScore)
-            userScore += chances
+        userScore += chances
+        if (user != null) {
             viewModel.updateScoreMeta(userScore)
-            binding.playerPoints.text = " X $userScore"
-
-            blur = 1F
-            chances = 0
-            binding.titleHint.setBackgroundColor(Color.GREEN)
-
-            val handler = Handler(Looper.getMainLooper())
-            binding.moviePoster.animate().apply {
-                duration = 1000
-                rotationYBy(360f)
-            }.start()
-            handler.postDelayed({
-                showPoster(blur)
-            }, 750)
-
-            binding.yearHint.visibility = View.VISIBLE
-            binding.directorHint.visibility = View.VISIBLE
-            binding.actorHint.visibility = View.VISIBLE
-            binding.synopsisHint.visibility = View.VISIBLE
         }
+        binding.playerPoints.text = " X $userScore"
+
+        blur = 1F
+        chances = 0
+        binding.titleHint.setBackgroundColor(Color.GREEN)
+
+        val handler = Handler(Looper.getMainLooper())
+        binding.moviePoster.animate().apply {
+            duration = 1000
+            rotationYBy(360f)
+        }.start()
+        handler.postDelayed({
+            showPoster(blur)
+        }, 750)
+
+        binding.yearHint.visibility = View.VISIBLE
+        binding.directorHint.visibility = View.VISIBLE
+        binding.actorHint.visibility = View.VISIBLE
+        binding.synopsisHint.visibility = View.VISIBLE
     }
 }
