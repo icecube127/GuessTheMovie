@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import edu.utap.guessthemovie.api.MovieApi
 import edu.utap.guessthemovie.api.MovieData
 import edu.utap.guessthemovie.api.Repository
+import edu.utap.guessthemovie.model.ScoreMeta
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,6 +18,9 @@ class MainViewModel : ViewModel() {
     private var displayName = MutableLiveData("Uninitialized")
     private var email = MutableLiveData("Uninitialized")
     private var uid = MutableLiveData("Uninitialized")
+    private val dbHelp = ViewModelDBHelper()
+    private var scoreMetaList = MutableLiveData<List<ScoreMeta>>()
+    private var firebaseAuthLiveData = FirestoreAuthLiveData()
 
     // API related data
     private val movieApi = MovieApi.create()
@@ -32,6 +36,35 @@ class MainViewModel : ViewModel() {
     fun observeMovie (): LiveData<MovieData> {
         return movieMeta
     }
+
+    fun fetchScoreMeta() {
+        dbHelp.fetchScoreMeta(scoreMetaList)
+    }
+    fun observeScoreMeta(): LiveData<List<ScoreMeta>> {
+        return scoreMetaList
+    }
+
+//    fun createScoreMeta() {
+//        val currentUser = firebaseAuthLiveData.getCurrentUser()!!
+//        val scoreMeta = ScoreMeta(
+//            name = currentUser.displayName ?: "Anonymous user",
+//            ownerUid = currentUser.uid,
+//            score = 0
+//        )
+//        dbHelp.createScoreMeta(scoreMeta, scoreMetaList)
+//    }
+
+    fun updateScoreMeta(score: Int){
+        val currentUser = firebaseAuthLiveData.getCurrentUser()!!
+        val scoreMeta = ScoreMeta(
+            name = currentUser.displayName ?: "Anonymous user",
+            ownerUid = currentUser.uid,
+            score = score
+        )
+        Log.d("XXXXXX", "ownerUid is ${scoreMeta.ownerUid}")
+        dbHelp.updateScoreMeta(scoreMeta, scoreMetaList)
+    }
+
 
     private fun userLogout() {
         displayName.postValue("No user")

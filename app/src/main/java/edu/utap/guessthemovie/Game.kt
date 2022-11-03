@@ -102,6 +102,7 @@ class Game : AppCompatActivity(){
 
         // check user's answer
         binding.bntSubmit.setOnClickListener {
+            viewModel.updateScoreMeta(-200)
             if (chances == 0) {
                 // do nothing.
                 Log.d(TAG, "game is over")
@@ -109,6 +110,7 @@ class Game : AppCompatActivity(){
                 val userInput = binding.userInput.text.toString()
                 hideKeyboard()
                 if (checkAnswer(movieTitle, userInput)) {
+                    Log.d("XXXXXX", "Game Win")
                     winGame()
                 }
                 else {
@@ -285,7 +287,9 @@ class Game : AppCompatActivity(){
     @SuppressLint("SetTextI18n")
     private fun winGame(){
         // XXXX WRITE ME
+        viewModel.fetchScoreMeta()
         userScore += chances
+        viewModel.updateScoreMeta(userScore)
         binding.playerPoints.text = " X $userScore"
 
         blur = 1F

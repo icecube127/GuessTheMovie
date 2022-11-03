@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             if(user == null){
                 println( "...... In log in  ${user?.displayName} email ${user?.email}")
                 AuthInit(viewModel, signInLauncher)
+//                viewModel.createScoreMeta()
             } else {
                 viewModel.signOut()
             }
