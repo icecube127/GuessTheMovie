@@ -21,6 +21,7 @@ class MainViewModel : ViewModel() {
     private val dbHelp = ViewModelDBHelper()
     private var scoreMetaList = MutableLiveData<List<ScoreMeta>>()
     private var firebaseAuthLiveData = FirestoreAuthLiveData()
+    private var score = MutableLiveData<Int>()
 
     // API related data
     private val movieApi = MovieApi.create()
@@ -37,22 +38,14 @@ class MainViewModel : ViewModel() {
         return movieMeta
     }
 
-    fun fetchScoreMeta() {
+    fun fetchScoreMeta(){
         dbHelp.fetchScoreMeta(scoreMetaList)
+        //println("............fetch score" + score)
     }
+
     fun observeScoreMeta(): LiveData<List<ScoreMeta>> {
         return scoreMetaList
     }
-
-//    fun createScoreMeta() {
-//        val currentUser = firebaseAuthLiveData.getCurrentUser()!!
-//        val scoreMeta = ScoreMeta(
-//            name = currentUser.displayName ?: "Anonymous user",
-//            ownerUid = currentUser.uid,
-//            score = 0
-//        )
-//        dbHelp.createScoreMeta(scoreMeta, scoreMetaList)
-//    }
 
     fun updateScoreMeta(score: Int){
         val currentUser = firebaseAuthLiveData.getCurrentUser()!!

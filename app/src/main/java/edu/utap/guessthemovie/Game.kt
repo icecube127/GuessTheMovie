@@ -19,6 +19,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
 import edu.utap.guessthemovie.api.MovieApi
 import edu.utap.guessthemovie.api.MovieData
 import edu.utap.guessthemovie.api.Repository
@@ -102,7 +103,6 @@ class Game : AppCompatActivity(){
 
         // check user's answer
         binding.bntSubmit.setOnClickListener {
-            viewModel.updateScoreMeta(-200)
             if (chances == 0) {
                 // do nothing.
                 Log.d(TAG, "game is over")
@@ -244,6 +244,7 @@ class Game : AppCompatActivity(){
                 "_ "
         }
         binding.titleHint.text = titleHint
+        binding.userInput.hint = movieTitle
     }
 
     private fun checkAnswer(movieTitle : String, userInput : String) : Boolean{
@@ -285,29 +286,40 @@ class Game : AppCompatActivity(){
     }
 
     @SuppressLint("SetTextI18n")
-    private fun winGame(){
+    private fun winGame() {
         // XXXX WRITE ME
+        val user = FirebaseAuth.getInstance().currentUser
         viewModel.fetchScoreMeta()
-        userScore += chances
-        viewModel.updateScoreMeta(userScore)
-        binding.playerPoints.text = " X $userScore"
+        viewModel.observeScoreMeta().observe(this) {
+            for (item in it) {
+                if (user != null) {
+                    if (item.ownerUid == user.uid) {
+                        userScore = item.score
+                    }
+                }
+            }
+            println("Return from db " + userScore)
+            userScore += chances
+            viewModel.updateScoreMeta(userScore)
+            binding.playerPoints.text = " X $userScore"
 
-        blur = 1F
-        chances = 0
-        binding.titleHint.setBackgroundColor(Color.GREEN)
+            blur = 1F
+            chances = 0
+            binding.titleHint.setBackgroundColor(Color.GREEN)
 
-        val handler = Handler(Looper.getMainLooper())
-        binding.moviePoster.animate().apply {
-            duration = 1000
-            rotationYBy(360f)
-        }.start()
-        handler.postDelayed({
-            showPoster(blur)
-        }, 750)
+            val handler = Handler(Looper.getMainLooper())
+            binding.moviePoster.animate().apply {
+                duration = 1000
+                rotationYBy(360f)
+            }.start()
+            handler.postDelayed({
+                showPoster(blur)
+            }, 750)
 
-        binding.yearHint.visibility = View.VISIBLE
-        binding.directorHint.visibility = View.VISIBLE
-        binding.actorHint.visibility = View.VISIBLE
-        binding.synopsisHint.visibility = View.VISIBLE
+            binding.yearHint.visibility = View.VISIBLE
+            binding.directorHint.visibility = View.VISIBLE
+            binding.actorHint.visibility = View.VISIBLE
+            binding.synopsisHint.visibility = View.VISIBLE
+        }
     }
 }

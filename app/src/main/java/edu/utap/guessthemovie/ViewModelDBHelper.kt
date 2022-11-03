@@ -2,12 +2,16 @@ package edu.utap.guessthemovie
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.Tasks.await
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import edu.utap.guessthemovie.model.ScoreMeta
 
 class ViewModelDBHelper {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val rootCollection = "allScore"
+    var score = 0
 
     fun fetchScoreMeta(notesList: MutableLiveData<List<ScoreMeta>>){
         db.collection(rootCollection)
@@ -24,25 +28,6 @@ class ViewModelDBHelper {
             }
     }
 
-//    fun createScoreMeta(
-//        scoreMeta: ScoreMeta,
-//        notesList: MutableLiveData<List<ScoreMeta>>
-//    ) {
-//        // You can get a document id if you need it.
-//        scoreMeta.firestoreID = db.collection(rootCollection).document().id
-//        // XXX Write me: add photoMeta
-//        db.collection(rootCollection)
-//            .add(scoreMeta)
-//            .addOnSuccessListener {
-//                Log.d(javaClass.simpleName,
-//                    "ScoreMeta created, id: ${scoreMeta.firestoreID}")
-//                fetchScoreMeta(notesList)
-//            }
-//            .addOnFailureListener {
-//                Log.d(javaClass.simpleName, "ScoreMeta created failed ${scoreMeta.firestoreID}")
-//            }
-//    }
-
     fun updateScoreMeta(scoreMeta: ScoreMeta,
                         notesList: MutableLiveData<List<ScoreMeta>>){
         db.collection(rootCollection)
@@ -54,7 +39,7 @@ class ViewModelDBHelper {
                     javaClass.simpleName,
                     "ScoreMeta update  id: ${scoreMeta.firestoreID}"
                 )
-                fetchScoreMeta(notesList)
+                //fetchMyScoreMeta()
             }
             .addOnFailureListener { e ->
                 Log.d(javaClass.simpleName, "ScoreMeta update FAILED id: ${scoreMeta.firestoreID}")
