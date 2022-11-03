@@ -69,6 +69,9 @@ class Game : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding = GameMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        if (user != null) {
+            viewModel.updateScoreMeta(userScore)
+        }
 
         setupGame()
         binding.btnNext.setOnClickListener { playGame() }
