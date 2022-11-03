@@ -39,11 +39,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnSignin.setOnClickListener {
+            val user = FirebaseAuth.getInstance().currentUser
             if(user == null){
                 println( "...... In log in  ${user?.displayName} email ${user?.email}")
                 AuthInit(viewModel, signInLauncher)
             } else {
                 viewModel.signOut()
+                binding.btnSignin.text = "Sign In"
+                binding.btnGuest.text = "Play as Guest"
             }
         }
 
