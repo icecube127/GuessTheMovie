@@ -3,15 +3,14 @@ package edu.utap.guessthemovie
 import android.R
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.Profile
 import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import edu.utap.guessthemovie.databinding.ProfileMainBinding
+
 
 class ProfilePage : AppCompatActivity() {
 
@@ -102,7 +101,6 @@ class ProfilePage : AppCompatActivity() {
     }
 
     private fun setupLeaderBoard(){
-        // XXXXX WRITE ME
         // GET LEADER BOARD INFO FROM DB
         viewModel.fetchScoreMeta()
         viewModel.observeScoreMeta().observe(this) {

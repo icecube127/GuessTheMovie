@@ -69,9 +69,6 @@ class Game : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding = GameMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        if (user != null) {
-            viewModel.updateScoreMeta(userScore)
-        }
 
         setupGame()
         binding.btnNext.setOnClickListener { playGame() }
@@ -89,6 +86,7 @@ class Game : AppCompatActivity(){
             viewModel.observeScoreMeta().observe(this) {
                 for (item in it) {
                     if (item.ownerUid == user.uid) {
+                        Log.d("XXXXXXXXXXXXXXXXXXX", "user info, ${item.name}, ${item.score}")
                         userScore = item.score
                         binding.playerPoints.text = " X $userScore"
                     }
@@ -309,6 +307,7 @@ class Game : AppCompatActivity(){
         userScore += chances
         if (user != null) {
             viewModel.updateScoreMeta(userScore)
+            Log.d("XXXXXXXXXXXXXXXXXX", "user score updated")
         }
         binding.playerPoints.text = " X $userScore"
 
