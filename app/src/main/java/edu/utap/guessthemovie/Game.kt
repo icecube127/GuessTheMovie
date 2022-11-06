@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -29,6 +30,8 @@ import kotlinx.coroutines.*
 
 class Game : AppCompatActivity(){
     private val scope = MainScope()
+    // debug mode - the input hint will show the movie title
+    private val Debug = true
 
     companion object{
         val TAG = this::class.java.simpleName
@@ -60,6 +63,14 @@ class Game : AppCompatActivity(){
     // For Testing
     private var currentPosition = 0
 
+    // background music
+    private lateinit var player: MediaPlayer
+    private val bgMusic = BGMusic()
+    private var songResources = bgMusic.fetchData()
+    private var songListInfo = songResources.values.toMutableList()
+    private var currentSongPosition = 0
+    private var musicStatus = false
+
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(window.decorView.rootView.windowToken, 0)
@@ -70,11 +81,16 @@ class Game : AppCompatActivity(){
         binding = GameMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        musicStatus = intent.getBooleanExtra("music", musicStatus)
+        setupBGMusic()
+
         setupGame()
         binding.btnNext.setOnClickListener { playGame() }
         binding.btnEndGame.setOnClickListener {
+            if (musicStatus)
+                player.stop()
             val selectionScreenIntent = Intent(this, ProfilePage::class.java)
-            selectionScreenIntent.putExtra("username", userName)
+            selectionScreenIntent.putExtra("music", musicStatus)
             startActivity(selectionScreenIntent)
         }
     }
@@ -205,39 +221,39 @@ class Game : AppCompatActivity(){
         val fadeIn = AlphaAnimation(0.0f, 1.0f)
         when (chance) {
             4 -> {
-                flipStar(stars[4])
+                flipStar(stars[4], false)
                 //binding.yearHint.visibility = View.VISIBLE
                 binding.yearHint.startAnimation(fadeIn)
                 fadeIn.duration = 1200
                 binding.yearHint.visibility = View.VISIBLE
             }
             3 -> {
-                flipStar(stars[3])
+                flipStar(stars[3], false)
                 //binding.directorHint.visibility = View.VISIBLE
                 binding.directorHint.startAnimation(fadeIn)
                 fadeIn.duration = 1200
                 binding.directorHint.visibility = View.VISIBLE
             }
             2 -> {
-                flipStar(stars[2])
+                flipStar(stars[2], false)
                 //binding.actorHint.visibility = View.VISIBLE
                 binding.actorHint.startAnimation(fadeIn)
                 fadeIn.duration = 1200
                 binding.actorHint.visibility = View.VISIBLE
             }
             1 -> {
-                flipStar(stars[1])
+                flipStar(stars[1], false)
                 //binding.synopsisHint.visibility = View.VISIBLE
                 binding.synopsisHint.startAnimation(fadeIn)
                 fadeIn.duration = 1200
                 binding.synopsisHint.visibility = View.VISIBLE
             }
-            0 -> flipStar(stars[0])
+            0 -> flipStar(stars[0], false)
             else -> Log.d(TAG, "Do nothing")
         }
     }
 
-    private fun flipStar(star : ImageView){
+    private fun flipStar(star : ImageView, on : Boolean){
         // takes the image view of the star and run the flip animation
         val handler = Handler(Looper.getMainLooper())
         star.animate().apply {
@@ -245,7 +261,10 @@ class Game : AppCompatActivity(){
             rotationYBy(360f)
         }.start()
         handler.postDelayed({
-            star.setImageResource(android.R.drawable.btn_star_big_off)
+            if(on)
+                star.setImageResource(android.R.drawable.btn_star_big_on)
+            else
+                star.setImageResource(android.R.drawable.btn_star_big_off)
         }, 750)
     }
 
@@ -259,7 +278,8 @@ class Game : AppCompatActivity(){
                 "_ "
         }
         binding.titleHint.text = titleHint
-        binding.userInput.hint = movieTitle
+        if(Debug)
+            binding.userInput.hint = movieTitle
     }
 
     private fun checkAnswer(movieTitle : String, userInput : String) : Boolean{
@@ -309,7 +329,6 @@ class Game : AppCompatActivity(){
             viewModel.updateScoreMeta(userScore)
             Log.d("XXXXXXXXXXXXXXXXXX", "user score updated")
         }
-        binding.playerPoints.text = " X $userScore"
 
         blur = 1F
         chances = 0
@@ -324,9 +343,36 @@ class Game : AppCompatActivity(){
             showPoster(blur)
         }, 750)
 
+        handler.postDelayed({
+            flipStar(binding.playerStar, true)
+        }, 1000)
+
+        handler.postDelayed({
+            binding.playerPoints.text = " X $userScore"
+        }, 2000)
+
         binding.yearHint.visibility = View.VISIBLE
         binding.directorHint.visibility = View.VISIBLE
         binding.actorHint.visibility = View.VISIBLE
         binding.synopsisHint.visibility = View.VISIBLE
+    }
+
+    private fun setupBGMusic() {
+        if (musicStatus) {
+            val song = songListInfo[currentSongPosition].rawID
+            player = MediaPlayer.create(this, song)
+            player.start()
+
+            player.setOnCompletionListener {
+                currentSongPosition += 1
+                if (currentSongPosition == 2)
+                    currentSongPosition = 0
+                player.reset()
+                val nextSong = songListInfo[currentSongPosition].rawID
+                player.setDataSource(resources.openRawResourceFd(nextSong))
+                player.prepare()
+                player.start()
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package edu.utap.guessthemovie
 
 import android.R
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
@@ -12,9 +13,11 @@ import com.google.firebase.auth.FirebaseAuth
 import edu.utap.guessthemovie.databinding.ProfileMainBinding
 
 
+
 class ProfilePage : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+
     class LeaderBoard(var name: String, var score: Int){
         override fun toString(): String {
                 return this.name + ": " + this.score
@@ -45,6 +48,10 @@ class ProfilePage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ProfileMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        var musicStatus = false
+        musicStatus = intent.getBooleanExtra("music", musicStatus)
+        binding.btnMusic.isChecked = musicStatus
 
         // display the player's name
         val user = FirebaseAuth.getInstance().currentUser
@@ -96,6 +103,8 @@ class ProfilePage : AppCompatActivity() {
         // PLAY GAME button
         binding.btnPlay.setOnClickListener {
             val gameIntent = Intent(this, Game::class.java)
+            val music = binding.btnMusic.isChecked
+            gameIntent.putExtra("music", music)
             startActivity(gameIntent)
         }
     }
