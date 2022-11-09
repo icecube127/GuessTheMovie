@@ -27,6 +27,7 @@ import edu.utap.guessthemovie.api.Repository
 import edu.utap.guessthemovie.databinding.GameMainBinding
 import edu.utap.guessthemovie.glide.Glide
 import kotlinx.coroutines.*
+import kotlinx.coroutines.NonCancellable.cancel
 
 class Game : AppCompatActivity(){
     private val scope = MainScope()
@@ -81,16 +82,23 @@ class Game : AppCompatActivity(){
         binding = GameMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        musicStatus = intent.getBooleanExtra("music", musicStatus)
-        setupBGMusic()
+        // initialize the music player
+        binding.btnMusic.isChecked = musicStatus
+        val song = songListInfo[currentSongPosition].rawID
+        player = MediaPlayer.create(this, song)
+        binding.btnMusic.setOnClickListener {
+            if(binding.btnMusic.isChecked)
+                startBGMusic()
+            else
+                player.stop()
+        }
 
         setupGame()
         binding.btnNext.setOnClickListener { playGame() }
         binding.btnEndGame.setOnClickListener {
-            if (musicStatus)
+            if (binding.btnMusic.isChecked)
                 player.stop()
             val selectionScreenIntent = Intent(this, ProfilePage::class.java)
-            selectionScreenIntent.putExtra("music", musicStatus)
             startActivity(selectionScreenIntent)
         }
     }
@@ -357,22 +365,23 @@ class Game : AppCompatActivity(){
         binding.synopsisHint.visibility = View.VISIBLE
     }
 
-    private fun setupBGMusic() {
-        if (musicStatus) {
-            val song = songListInfo[currentSongPosition].rawID
-            player = MediaPlayer.create(this, song)
+    private fun startBGMusic() {
+        player.start()
+        player.setOnCompletionListener {
+            currentSongPosition += 1
+            if (currentSongPosition == 2)
+                currentSongPosition = 0
+            player.reset()
+            val nextSong = songListInfo[currentSongPosition].rawID
+            player.setDataSource(resources.openRawResourceFd(nextSong))
+            player.prepare()
             player.start()
-
-            player.setOnCompletionListener {
-                currentSongPosition += 1
-                if (currentSongPosition == 2)
-                    currentSongPosition = 0
-                player.reset()
-                val nextSong = songListInfo[currentSongPosition].rawID
-                player.setDataSource(resources.openRawResourceFd(nextSong))
-                player.prepare()
-                player.start()
-            }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        player.reset()
+        player.release()
     }
 }

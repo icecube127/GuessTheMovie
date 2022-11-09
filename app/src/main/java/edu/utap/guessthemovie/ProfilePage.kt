@@ -49,10 +49,6 @@ class ProfilePage : AppCompatActivity() {
         binding = ProfileMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var musicStatus = false
-        musicStatus = intent.getBooleanExtra("music", musicStatus)
-        binding.btnMusic.isChecked = musicStatus
-
         // display the player's name
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
@@ -103,8 +99,6 @@ class ProfilePage : AppCompatActivity() {
         // PLAY GAME button
         binding.btnPlay.setOnClickListener {
             val gameIntent = Intent(this, Game::class.java)
-            val music = binding.btnMusic.isChecked
-            gameIntent.putExtra("music", music)
             startActivity(gameIntent)
         }
     }

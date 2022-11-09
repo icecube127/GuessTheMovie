@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -212,14 +212,26 @@
             android:id="@+id/btn_Next"
             android:textSize="14sp"
             android:backgroundTint="@color/teal"
-            android:layout_marginEnd="20dp"/>
-
+            android:layout_marginEnd="10dp"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="END GAME"
             android:id="@+id/btn_EndGame"
             android:textSize="14sp"
-            android:backgroundTint="@color/teal"/>
+            android:backgroundTint="@color/teal"
+            android:layout_marginEnd="10dp"/>
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_music"
+            android:background="@color/teal"
+            android:paddingStart="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textSize="14sp"
+            android:text="MUSIC:"
+            android:textStyle="bold"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
     </LinearLayout>
 </LinearLayout>

@@ -57,16 +57,7 @@
             android:backgroundTint="@color/teal"
             android:minHeight="0dp"
             android:minWidth="0dp"
-            android:layout_marginEnd="20dp"
             />
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_music"
-            android:background="@color/teal"
-            android:paddingStart="5dp"
-            android:text="Music: "
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
     </LinearLayout>
     <Button
         android:layout_width="wrap_content"
